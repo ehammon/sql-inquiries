@@ -1,0 +1,44 @@
+MEDIUM DIFFICULTY
+
+Query: show sum of male and female patients and print results in the same row
+
+SELECT
+(SELECT COUNT(first_name) FROM patients WHERE gender = 'M') AS MALE,  
+(SELECT COUNT(first_name) FROM patients WHERE gender = 'F') AS FEMALE;
+
+
+Query: show first and last name and allergies from patients who have allergies to Penicillin or Morphine. show results ordered ascending by allergies, then first name, then last name.
+
+SELECT first_name, last_name, allergies	 FROM patients
+WHERE allergies IN ('Penicillin', 'Morphine')
+ORDER BY allergies,
+first_name,
+last_name;
+
+
+Query: Show patient_id, diagnosis from admissions. Find patients admitted multiple times for the same diagnosis.
+
+SELECT patient_id, diagnosis FROM admissions
+  GROUP BY patient_id,
+            diagnosis
+  HAVING COUNT(diagnosis) > 1;
+  
+  
+Query: Show the city and the total number of patients in the city. Order from most to least patients and then by city name ascending.
+  
+SELECT city, COUNT(*) AS total_patients FROM patients
+  GROUP BY city
+  ORDER BY COUNT(*) desc, city ;
+
+Query: Show first name, last name and role of every person that is either patient or physician. The roles are either "Patient" or "Physician"
+
+SELECT first_name, last_name, 'Patient' AS role FROM patients
+UNION
+SELECT first_name, last_name, 'Physician' as role from physicians;
+
+
+Query: 
+
+
+
+
