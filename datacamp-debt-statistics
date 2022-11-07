@@ -1,0 +1,67 @@
+SQL queries used in DataCamp Project to Analyze International Debt Statistics
+
+Q1: Find the number of Distinct Countries
+
+SELECT 
+    COUNT (DISTINCT country_name) as total_distinct_countries
+FROM international_debt;
+
+Q2: Find the distinict debt indicators
+
+SELECT DISTINCT(indicator_code) AS distinct_debt_indicators
+FROM international_debt
+ORDER BY distinct_debt_indicators;
+
+Q3: Total the amount of debt owed by the countries. Divide it by 1000000 and round to two decimal places.
+
+SELECT 
+    ROUND(SUM(debt)/1000000, 2) AS total_debt
+FROM international_debt; 
+
+Q4: Country with the highest debt
+
+SELECT 
+   country_name,
+    SUM(debt) AS total_debt
+FROM international_debt
+GROUP BY country_name
+ORDER BY total_debt DESC
+LIMIT 1;
+
+Q5: Average amount of debt across indicators
+
+SELECT 
+    indicator_code AS debt_indicator,
+    indicator_name,
+    AVG(debt) AS average_debt
+FROM international_debt
+GROUP BY debt_indicator, indicator_name
+ORDER BY average_debt DESC
+LIMIT 10;
+
+Q6: Find out which country owes the highest amount of debt in the category of long term debts (indicator_code DT.AMT.DLXF.CD).
+
+SELECT
+    country_name,
+    indicator_name
+FROM international_debt
+WHERE debt = (SELECT MAX(debt) FROM international_debt WHERE indicator_code =  'DT.AMT.DLXF.CD');
+
+Q7: The most common debt indicator code. We saw that long-term debt is the topmost category when it comes to the average amount of debt.
+But is it the most common indicator in which the countries owe their debt?
+
+SELECT
+    indicator_code,
+    COUNT(indicator_code) AS indicator_count
+FROM international_debt
+GROUP BY indicator_code
+ORDER BY indicator_count DESC, indicator_code DESC
+LIMIT 20;
+
+Q8: Let's find out the maximum amount of debt that each country has. 
+
+SELECT country_name, MAX(debt) AS maximum_debt
+FROM international_debt
+GROUP BY country_name
+ORDER BY maximum_debt DESC
+LIMIT 10;
