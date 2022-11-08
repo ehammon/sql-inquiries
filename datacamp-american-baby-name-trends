@@ -53,4 +53,60 @@ AND first_name LIKE '%a'
 GROUP BY first_name
 ORDER BY SUM(num) DESC;  //This showed as the correct answer, but if it wouldn't work with aggregate function in ORDER BY I did a subquery in FROM with the entire original query + SUM(num) in the SELECT statement and got the same results
 
-Q5: 
+Q5: Based on the results in the previous task, we can see that Olivia is the most popular female name ending in 'A' since 2015. 
+When did the name Olivia become so popular?
+
+SELECT 
+    first_name,
+    year,
+    num,
+    SUM(num) OVER(ORDER BY year ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_olivias
+FROM baby_names
+WHERE first_name = 'Olivia';
+
+Q6: Find out what that top male name is for each year in our dataset.
+
+SELECT 
+    baby_names.year,
+    first_name,
+    num
+FROM baby_names
+INNER JOIN
+(
+    SELECT
+        year,
+        MAX(num) AS max_num
+    FROM baby_names
+    WHERE sex = 'M'
+    GROUP BY year
+) AS max
+ON baby_names.year = max.year AND baby_names.num = max.max_num
+ORDER BY year DESC;
+
+Q7: Noah and Liam have ruled the roost in the last few years, but if we scroll down in the results, it looks like Michael and Jacob have 
+also spent a good number of years as the top name! Which name has been number one for the largest number of years?
+
+WITH top_names AS (
+SELECT 
+    baby_names.year,
+    first_name,
+    num
+FROM baby_names
+INNER JOIN
+(
+    SELECT
+        year,
+        MAX(num) AS max_num
+    FROM baby_names
+    WHERE sex = 'M'
+    GROUP BY year
+) AS max
+ON baby_names.year = max.year AND baby_names.num = max.max_num
+ORDER BY year DESC)
+
+SELECT 
+    first_name,
+    COUNT(year) AS count_top_name
+FROM top_names
+GROUP BY first_name
+ORDER BY count_top_name DESC;
